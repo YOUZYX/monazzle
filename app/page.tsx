@@ -23,18 +23,17 @@ import { DifficultySelectionModal } from '@/app/components/monazzle/DifficultySe
 import HomeFrame from "@/app/components/monazzle/HomeFrame"; 
 // PuzzleBoard import is no longer needed here, as PuzzleFrame handles it.
 // import PuzzleBoard, { Difficulty as PuzzleDifficultyType } from '@/components/PuzzleBoard'; 
-import { NavigationTab } from '@/app/lib/navigation';
-import { AppFrame } from '@/app/lib/appFrame';
+
 // Define Navigational Tabs (for Footer)
-{/*export enum NavigationTab {
+export enum NavigationTab {
   PLAY = 'PLAY',
   CHALLENGES = 'CHALLENGES',
   HOW_TO_PLAY = 'HOW_TO_PLAY',
   PROFILE = 'PROFILE',
-}*/}
+}
 
 // Updated AppFrame enum
-{/*export enum AppFrame {
+export enum AppFrame {
   HOME, 
   CONNECT_WALLET,
   PLAY_SETUP,
@@ -43,7 +42,7 @@ import { AppFrame } from '@/app/lib/appFrame';
   PROFILE_VIEW,
   HOW_TO_PLAY_VIEW,
   CHALLENGES_VIEW,
-}*/}
+}
 
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
@@ -79,6 +78,11 @@ export default function MonazzlePage() {
       : str;
   };
 
+  // Effect to sync localEoaAddress with wagmiEoaAddress
+  useEffect(() => {
+    setLocalEoaAddress(wagmiEoaAddress || null);
+  }, [wagmiEoaAddress]);
+
   // Effect to react to changes in wagmi's connection status
   useEffect(() => {
     // console.log("Wagmi status changed:", { isWagmiConnected, wagmiEoaAddress, wagmiStatus });
@@ -88,7 +92,7 @@ export default function MonazzlePage() {
       return;
     }
 
-    setLocalEoaAddress(wagmiEoaAddress || null);
+    // setLocalEoaAddress(wagmiEoaAddress || null); // Moved to its own effect
 
     if (isWagmiConnected && wagmiEoaAddress) {
       if (currentFrame === AppFrame.CONNECT_WALLET || currentFrame === AppFrame.HOME) {
@@ -286,11 +290,13 @@ export default function MonazzlePage() {
   };
 
   useEffect(() => {
-    if (currentFrame === AppFrame.HOME || currentFrame === AppFrame.CONNECT_WALLET) {
+    // If on HOME or CONNECT_WALLET, and the wallet IS connected and we have an EOA address, then move to PLAY_SETUP.
+    // Otherwise, it should stay on HOME or CONNECT_WALLET.
+    if ((currentFrame === AppFrame.HOME || currentFrame === AppFrame.CONNECT_WALLET) && isWagmiConnected && wagmiEoaAddress) {
       setCurrentFrame(AppFrame.PLAY_SETUP);
       setActiveTab(NavigationTab.PLAY);
     }
-  }, [currentFrame]);
+  }, [currentFrame, isWagmiConnected, wagmiEoaAddress]); // Add isWagmiConnected and wagmiEoaAddress to dependencies
 
   const renderCurrentFrame = () => {
     /* console.log("Rendering frame - Top:", { 
@@ -366,7 +372,7 @@ export default function MonazzlePage() {
             <div className="bg-mona-charcoal/80 border border-mona-lavender/30 rounded-2xl shadow-2xl p-8 max-w-xl w-full text-center">
               <h2 className="text-3xl mb-6 text-mona-purple font-bold">How To Play + Costs</h2>
               <blockquote className="max-w-xl mx-auto text-center italic text-mona-cream border-l-4 border-mona-purple pl-4">
-                Initialize and fund your AA wallet with enough MON tokens, then generate or use “Surprise Me” to get your puzzle, solve it as quickly as you can (using hints or AI solve if needed), mint your NFT after finishing to save your achievement on-chain, and cast your puzzle on Farcaster.
+                Initialize and fund your AA wallet with enough MON tokens, then generate or use "Surprise Me" to get your puzzle, solve it as quickly as you can (using hints or AI solve if needed), mint your NFT after finishing to save your achievement on-chain, and cast your puzzle on Farcaster.
                 <hr className="border-mona-slate/30" />
                 Hint: Reveals full puzzle for 5 seconds
                 <br></br>
