@@ -21,7 +21,7 @@ if (!projectId) {
 const metadata = {
   name: 'Monazzle',
   description: 'Monazzle - A Farcaster Mini-App Puzzle Game on Monad',
-  url: 'http://localhost:3000', // Replace with your actual app URL
+  url: 'https://monazzle.vercel.app/', // Replace with your actual app URL
   icons: ['/images/homestarter.png'] // Assuming homestarter.png is in public/images/
 };
 
