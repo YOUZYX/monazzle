@@ -23,14 +23,14 @@ import { DifficultySelectionModal } from '@/app/components/monazzle/DifficultySe
 import HomeFrame from "@/app/components/monazzle/HomeFrame"; 
 // PuzzleBoard import is no longer needed here, as PuzzleFrame handles it.
 // import PuzzleBoard, { Difficulty as PuzzleDifficultyType } from '@/components/PuzzleBoard'; 
-
+import { NavigationTab } from '@/app/lib/navigation';
 // Define Navigational Tabs (for Footer)
-export enum NavigationTab {
+{/*export enum NavigationTab {
   PLAY = 'PLAY',
   CHALLENGES = 'CHALLENGES',
   HOW_TO_PLAY = 'HOW_TO_PLAY',
   PROFILE = 'PROFILE',
-}
+}*/}
 
 // Updated AppFrame enum
 export enum AppFrame {

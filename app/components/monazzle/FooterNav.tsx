@@ -7,8 +7,8 @@ import {
   BookOpen,    // For How To Play
   UserCircle,  // For Profile
 } from 'lucide-react';
-import { NavigationTab } from '../../page'; // Assuming page.tsx is in app directory
-
+//import { NavigationTab } from '../../page'; // Assuming page.tsx is in app directory
+import { NavigationTab } from '@/app/lib/navigation';
 interface FooterNavProps {
   activeTab: NavigationTab;
   onNavigate: (tab: NavigationTab) => void;
