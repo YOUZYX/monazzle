@@ -372,7 +372,7 @@ export default function MonazzlePage() {
             <div className="bg-mona-charcoal/80 border border-mona-lavender/30 rounded-2xl shadow-2xl p-8 max-w-xl w-full text-center">
               <h2 className="text-3xl mb-6 text-mona-purple font-bold">How To Play + Costs</h2>
               <blockquote className="max-w-xl mx-auto text-center italic text-mona-cream border-l-4 border-mona-purple pl-4">
-                Initialize and fund your AA wallet with enough MON tokens, then generate or use "Surprise Me" to get your puzzle, solve it as quickly as you can (using hints or AI solve if needed), mint your NFT after finishing to save your achievement on-chain, and cast your puzzle on Farcaster.
+                Initialize and fund your AA wallet with enough MON tokens, then generate or use Surprise Me to get your puzzle, solve it as quickly as you can (using hints or AI solve if needed), mint your NFT after finishing to save your achievement onchain, and cast your puzzle on Farcaster.
                 <hr className="border-mona-slate/30" />
                 Hint: Reveals full puzzle for 5 seconds
                 <br></br>
