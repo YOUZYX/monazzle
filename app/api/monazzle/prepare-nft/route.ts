@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import FormData from 'form-data';
 import { Readable } from 'stream';
-import { firestore } from '../../../lib/firebaseAdmin';
+import { firestore } from '../../../../lib/firebaseAdmin';
 
 
 const PINATA_API_KEY = process.env.PINATA_API_KEY;
