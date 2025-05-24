@@ -104,7 +104,7 @@ export function ConnectAndTopUpFrame({ onWalletsConnected, onDisconnect }: Conne
     toast.info("Wallet disconnected.");
     onDisconnect(); // Notify parent to change frame
   };
-
+  const { topUpAccount: zeroDevTopUp } = useContext(ZeroDevContext);
   const handleTopUp = async () => {
     if (!kernelClient || !smartAccountAddress || !eoaAddress) {
       // console.error("[MonazzleZeroDevLog] TopUp Error: Missing kernelClient, smartAccountAddress or eoaAddress");
@@ -119,7 +119,7 @@ export function ConnectAndTopUpFrame({ onWalletsConnected, onDisconnect }: Conne
       // For now, let's assume you want to use the `topUpAccount` function from your context
       // which is designed to send a UserOperation from the AA to itself.
       // This means the AA needs to be funded with gas (or use a paymaster) first.
-      const { topUpAccount: zeroDevTopUp } = useContext(ZeroDevContext); // Get it directly
+      //const { topUpAccount: zeroDevTopUp } = useContext(ZeroDevContext); // Get it directly
       const amountInWei = BigInt(parseFloat(topUpAmount) * 1e18); // Simple conversion, use a library for precision
       
       const txHash = await zeroDevTopUp(amountInWei); // This was how it was before, assuming it's what's intended.
