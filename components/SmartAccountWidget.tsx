@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import useZeroDev from '@/hooks/useZeroDev'
-import { truncateAddress } from '@/lib/utils'
+{/*import { truncateAddress } from '@/lib/utils'*/}
 
 export default function SmartAccountWidget() {
   const { isConnected, address: eoaAddress } = useAccount()
@@ -101,13 +101,13 @@ export default function SmartAccountWidget() {
       <div className="space-y-2 mb-4">
         <div className="flex justify-between items-center">
           <span className="text-gray-400">EOA Address:</span>
-          <span className="font-mono text-sm">{truncateAddress(eoaAddress || '')}</span>
+          {/*<span className="font-mono text-sm">{truncateAddress(eoaAddress || '')}</span>*/}
         </div>
         
         {smartAccountAddress && (
           <div className="flex justify-between items-center">
             <span className="text-gray-400">Smart Account:</span>
-            <span className="font-mono text-sm">{truncateAddress(smartAccountAddress)}</span>
+            {/*<span className="font-mono text-sm">{truncateAddress(smartAccountAddress)}</span>*/}
           </div>
         )}
 
@@ -153,7 +153,7 @@ export default function SmartAccountWidget() {
                 rel="noopener noreferrer"
                 className="text-blue-400 hover:underline break-all"
               >
-                {truncateAddress(depositTxHash, 12, 12)}
+                {/*{truncateAddress(depositTxHash, 12, 12)}*/}
               </a>
             </div>
           )}
