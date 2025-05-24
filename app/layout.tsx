@@ -1,14 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import { FrameProvider } from "@/components/farcaster-provider";
-
+// import { Inter } from "next/font/google"; // Assuming you might have custom fonts or remove if not used
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+import { headers } from "next/headers"; 
+import ContextProvider from '@/context'; // Import the new ContextProvider
 
+// const inter = Inter({ subsets: ["latin"] }); // If using Inter font
+
+// Metadata from your page.tsx or a new one
 export const metadata: Metadata = {
-  title: "Monad Farcaster MiniApp Template",
-  description: "A template for building mini-apps on Farcaster and Monad",
+  title: "Monazzle - Farcaster Puzzle Game",
+  description: "Create and solve puzzles on Monad. Powered by Reown.",
+  // Add other metadata like openGraph, icons etc. as needed
+  //icons: { icon: '/favicon.ico'}, // Example
 };
 
 export default function RootLayout({
@@ -16,10 +20,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookies = headers().get('cookie') ?? null; // Ensure null if no cookie
+
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <FrameProvider>{children}</FrameProvider>
+      {/* <body className={inter.className}> */}
+      <body> {/* Remove font className if not using Inter or similar */}
+        <ContextProvider cookies={cookies}>{children}</ContextProvider>
       </body>
     </html>
   );

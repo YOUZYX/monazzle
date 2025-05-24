@@ -27,6 +27,11 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env # Covers root .env if any
+
+# Server specific sensitive files
+server/.env
+server/*.json # For Firebase service account key like monazzle-youzy-firebase-adminsdk-*.json
 
 # vercel
 .vercel
@@ -34,5 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local environment variables
+.env*.local
 
 .env

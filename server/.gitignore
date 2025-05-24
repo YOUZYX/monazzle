@@ -1,0 +1,7 @@
+node_modules
+dist
+.env
+*.log
+
+# Firebase service account key if stored here directly
+*.json 

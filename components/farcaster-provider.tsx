@@ -59,7 +59,7 @@ export function FrameProvider({ children }: FrameProviderProps) {
         setError(
           err instanceof Error ? err.message : "Failed to initialize SDK"
         );
-        console.error("SDK initialization error:", err);
+        //console.error("SDK initialization error:", err);
       }
     };
 
