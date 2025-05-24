@@ -17,28 +17,45 @@ export function HistoryFrame() {
     <div className="p-4 md:p-8 max-w-3xl mx-auto w-full space-y-8">
       <Card className={`${glassCardStyle} text-center`}>
         <CardHeader>
-          <CardTitle className="text-mona-cream text-2xl md:text-3xl font-semibold">Monazzle History</CardTitle>
+          <CardTitle className="text-mona-cream text-2xl md:text-3xl font-semibold">
+            {'Monazzle History'}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {recentMonazzles.length === 0 ? (
-            <p className="text-mona-slate">You haven't played any Monazzles yet.</p>
+            <p className="text-mona-slate">
+              {'You haven\'t played any Monazzles yet.'}
+            </p>
           ) : (
             <ul className="space-y-3">
               {recentMonazzles.map((monazzle) => (
-                <li key={monazzle.id} className="flex items-center space-x-4 p-3 bg-mona-charcoal/50 rounded-lg border border-mona-slate/30">
-                  <img src={monazzle.imageUrl} alt={`Puzzle ${monazzle.id}`} className="w-16 h-16 rounded-md object-cover"/>
+                <li
+                  key={monazzle.id}
+                  className="flex items-center space-x-4 p-3 bg-mona-charcoal/50 rounded-lg border border-mona-slate/30"
+                >
+                  <img
+                    src={monazzle.imageUrl}
+                    alt={`Puzzle ${monazzle.id}`}
+                    className="w-16 h-16 rounded-md object-cover"
+                  />
                   <div className="text-left">
-                    <p className="text-mona-cream font-semibold">Difficulty: {monazzle.difficulty}</p>
-                    <p className="text-mona-slate text-sm">Moves: {monazzle.moves} | Time: {monazzle.time}</p>
+                    <p className="text-mona-cream font-semibold">
+                      {'Difficulty: '} {monazzle.difficulty}
+                    </p>
+                    <p className="text-mona-slate text-sm">
+                      {'Moves: '} {monazzle.moves} {' | Time: '} {monazzle.time}
+                    </p>
                   </div>
                   {/* Add action buttons like 'Play Again' or 'View Details' if needed */}
                 </li>
               ))}
             </ul>
           )}
-          <p className="text-xs text-mona-slate mt-4">Full history and leaderboard coming soon!</p>
+          <p className="text-xs text-mona-slate mt-4">
+            {'Full history and leaderboard coming soon!'}
+          </p>
         </CardContent>
       </Card>
     </div>
   );
-} 
+}
