@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useContext } from 'react';
 import { Button } from './ui_placeholders';
-import { Difficulty, AppFrame } from '../../page'; // Assuming AppFrame might be useful for some internal logic or logging
+import { Difficulty } from '../../page'; // Assuming AppFrame might be useful for some internal logic or logging
 import { PuzzleSummary } from './FinishMintFrame'; 
 import { Lightbulb, BrainCircuit, RotateCcw, FlagOff } from 'lucide-react';
 import PuzzleBoard, { Difficulty as PuzzleDifficultyType } from '@/components/PuzzleBoard'; // Import PuzzleBoard
 import { ZeroDevContext } from '@/context/zeroDev';
 import { Toaster, toast } from 'sonner'; // Import Toaster and toast
-
+import { AppFrame } from '@/app/lib/appFrame';
 // Tile interface and related logic for tile slicing can be removed if PuzzleBoard handles its own display.
 // interface Tile { ... }
 
