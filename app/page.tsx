@@ -24,6 +24,7 @@ import HomeFrame from "@/app/components/monazzle/HomeFrame";
 // PuzzleBoard import is no longer needed here, as PuzzleFrame handles it.
 // import PuzzleBoard, { Difficulty as PuzzleDifficultyType } from '@/components/PuzzleBoard'; 
 import { NavigationTab } from '@/app/lib/navigation';
+import { AppFrame } from '@/app/lib/appFrame';
 // Define Navigational Tabs (for Footer)
 {/*export enum NavigationTab {
   PLAY = 'PLAY',
@@ -33,7 +34,7 @@ import { NavigationTab } from '@/app/lib/navigation';
 }*/}
 
 // Updated AppFrame enum
-export enum AppFrame {
+{/*export enum AppFrame {
   HOME, 
   CONNECT_WALLET,
   PLAY_SETUP,
@@ -42,7 +43,7 @@ export enum AppFrame {
   PROFILE_VIEW,
   HOW_TO_PLAY_VIEW,
   CHALLENGES_VIEW,
-}
+}*/}
 
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
