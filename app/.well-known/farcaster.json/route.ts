@@ -6,16 +6,16 @@ export async function GET() {
     // TODO: Add account association
     frame: {
       version: "1",
-      name: "Monad Farcaster MiniApp Template",
-      iconUrl: `${APP_URL}/images/icon.png`,
+      name: "Monazzle",
+      iconUrl: `${APP_URL}/images/homestarter.png`,
       homeUrl: `${APP_URL}`,
-      imageUrl: `${APP_URL}/images/feed.png`,
+      imageUrl: `${APP_URL}/images/homestarter.png`,
       screenshotUrls: [],
       tags: ["monad", "farcaster", "miniapp", "template"],
       primaryCategory: "developer-tools",
       buttonTitle: "Launch Template",
-      splashImageUrl: `${APP_URL}/images/splash.png`,
-      splashBackgroundColor: "#ffffff",
+      splashImageUrl: `${APP_URL}/images/monazzle_jigsaw.gif`,
+      splashBackgroundColor: "#200D44",
       webhookUrl: `${APP_URL}/api/webhook`,
     },
   };
