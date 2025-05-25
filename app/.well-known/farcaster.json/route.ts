@@ -13,7 +13,7 @@ export async function GET() {
       screenshotUrls: [],
       tags: ["monad", "farcaster", "miniapp", "template"],
       primaryCategory: "developer-tools",
-      buttonTitle: "Launch Template",
+      buttonTitle: "Launch Monazzle",
       splashImageUrl: `${APP_URL}/images/monazzle_jigsaw.gif`,
       splashBackgroundColor: "#200D44",
       webhookUrl: `${APP_URL}/api/webhook`,
