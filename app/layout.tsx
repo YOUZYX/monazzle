@@ -10,9 +10,9 @@ import ContextProvider from '@/context'; // Import the new ContextProvider
 // Metadata from your page.tsx or a new one
 export const metadata: Metadata = {
   title: "Monazzle - Farcaster Puzzle Game",
-  description: "Create and solve puzzles on Monad. Powered by Reown.",
+  description: "Create and solve puzzles on Monad.",
   // Add other metadata like openGraph, icons etc. as needed
-  //icons: { icon: '/favicon.ico'}, // Example
+  //icons: { icon: '../public/images/'}, // Example
 };
 
 export default function RootLayout({

@@ -3,20 +3,24 @@ import { APP_URL } from "../../../lib/constants";
 
 export async function GET() {
   const farcasterConfig = {
-    // TODO: Add account association
-    frame: {
-      version: "1",
-      name: "Monazzle",
-      iconUrl: `${APP_URL}/images/homestarter.png`,
-      homeUrl: `${APP_URL}`,
-      imageUrl: `${APP_URL}/images/homestarter.png`,
-      screenshotUrls: [],
-      tags: ["monad", "farcaster", "miniapp", "template"],
-      primaryCategory: "developer-tools",
-      buttonTitle: "Launch Monazzle",
-      splashImageUrl: `${APP_URL}/images/monazzle_jigsaw.gif`,
-      splashBackgroundColor: "#200D44",
-      webhookUrl: `${APP_URL}/api/webhook`,
+    "accountAssociation": {
+    "header": "eyJmaWQiOjEwNjE4OTgsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHhhMDQxYjE2OENFMjI4MDhBNDkwMWQ0NzdBYTkyMzg0OWQyMDUzYUUwIn0",
+    "payload": "eyJkb21haW4iOiJtb25henpsZS52ZXJjZWwuYXBwIn0",
+    "signature": "MHgxN2U3YWU5Y2FlNjY3YmY3YTg0NDBiNmU1NWIzYTU4MThhODE4MDhjNmRiMGE3YzFiMWM5MGZkNDJjOWU2MjMxNzU1NWRjYjI0MzA2ZDRhYjM5MDVlYTU4Y2NiNzA3NGJiMmViMGM5ZTE5YTJiNzVlNmRiZDkxNTNmMGYwYTY1NzFj"
+  },
+    "frame": {
+      "version": "1",
+      "name": "Monazzle",
+      "iconUrl": `${APP_URL}/images/monazzle_img.png`,
+      "homeUrl": `${APP_URL}`,
+      "imageUrl": `${APP_URL}/images/homestarter.png`,
+      "screenshotUrls": [],
+      "tags": ["monad", "farcaster", "miniapp", "template"],
+      "primaryCategory": "developer-tools",
+      "buttonTitle": "Launch Monazzle",
+      "splashImageUrl": `${APP_URL}/images/monazzle_jigsaw.gif`,
+      "splashBackgroundColor": "#200D44",
+      "webhookUrl": `${APP_URL}/api/webhook`,
     },
   };
 
