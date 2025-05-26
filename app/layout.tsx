@@ -13,9 +13,7 @@ const frame = {
     action: {
       type: "launch_frame",
       name: "Monazzle",
-      url: APP_URL,
-      splashImageUrl: `${APP_URL}/images/monazzle_splash.png`,
-      splashBackgroundColor: "#200D44",
+      url: APP_URL
     },
   },
 };
