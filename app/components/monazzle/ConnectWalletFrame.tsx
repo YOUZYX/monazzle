@@ -8,9 +8,6 @@ import { Wallet } from 'lucide-react'; // Assuming you use lucide-react for icon
 import { Toaster, toast } from 'sonner'; // Import Toaster and toast
 import { useFrame } from '@/components/farcaster-provider'; // Import useFrame hook
 
-// Placeholder for ZeroDev integration - replace with actual SDK calls
-const ZERODEV_PROJECT_ID = 'b8f9fdbcd95c3c14aea486a0e78293a4'; // Hardcoded as per summary
-
 interface ConnectWalletFrameProps {
   onWalletConnected: (eoaAddress: string, aaAddress: string) => void;
 }

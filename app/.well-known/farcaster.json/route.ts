@@ -18,7 +18,7 @@ export async function GET() {
       "tags": ["monad", "farcaster", "miniapp", "games"],
       "primaryCategory": "games",
       "buttonTitle": "Launch Monazzle",
-      "splashImageUrl": `${APP_URL}/images/monazzle_splash.png`,
+      //"splashImageUrl": `${APP_URL}/images/monazzle_splash.png`,
       "splashBackgroundColor": "#200D44",
       "webhookUrl": `${APP_URL}/api/webhook`,
     },
