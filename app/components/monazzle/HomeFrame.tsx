@@ -2,32 +2,27 @@
 
 import Image from "next/image";
 import React, { useEffect } from 'react';
-import { useFrame } from '@/components/farcaster-provider'; // Import useFrame hook
+import { sdk } from '@farcaster/frame-sdk';
 
 interface HomeFrameProps {
   onTimeout: () => void;
 }
 
 export default function HomeFrame({ onTimeout }: HomeFrameProps) {
-  // Safely get Farcaster actions (might not be available outside Farcaster)
-  let actions = null;
-  let isSDKLoaded = false;
-  
-  try {
-    const frameContext = useFrame();
-    actions = frameContext.actions;
-    isSDKLoaded = frameContext.isSDKLoaded;
-  } catch {
-    // Not in Farcaster context, that's ok
-  }
-
-  // Call ready() when the frame is mounted and SDK is loaded
+  // Call ready() when the frame is mounted to dismiss Farcaster splash screen
   useEffect(() => {
-    if (actions && isSDKLoaded) {
-      actions.ready().catch(console.error);
-      console.log("HomeFrame: Called SDK ready()");
-    }
-  }, [actions, isSDKLoaded]);
+    const dismissSplash = async () => {
+      try {
+        await sdk.actions.ready();
+        console.log("HomeFrame: Called SDK ready() - splash screen dismissed");
+      } catch (error) {
+        // Not in Farcaster context or SDK not available, that's ok
+        console.log("HomeFrame: SDK ready() not available (not in Farcaster)");
+      }
+    };
+    
+    dismissSplash();
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {

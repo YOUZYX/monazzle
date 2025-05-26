@@ -6,7 +6,7 @@ import { Button } from '@/app/components/ui/button'; // Using your placeholder b
 import { appKitModal } from '@/context'; // Import the Reown AppKit modal instance
 import { Wallet } from 'lucide-react'; // Assuming you use lucide-react for icons
 import { Toaster, toast } from 'sonner'; // Import Toaster and toast
-import { useFrame } from '@/components/farcaster-provider'; // Import useFrame hook
+import { sdk } from '@farcaster/frame-sdk';
 
 interface ConnectWalletFrameProps {
   onWalletConnected: (eoaAddress: string, aaAddress: string) => void;
@@ -15,18 +15,6 @@ interface ConnectWalletFrameProps {
 export function ConnectWalletFrame({ onWalletConnected }: ConnectWalletFrameProps) {
   const { isConnected, address: eoaAddress, connector } = useAccount();
   const [derivedAaAddress, setDerivedAaAddress] = useState<string | null>(null);
-  
-  // Safely get Farcaster actions (might not be available outside Farcaster)
-  let actions = null;
-  let isSDKLoaded = false;
-  
-  try {
-    const frameContext = useFrame();
-    actions = frameContext.actions;
-    isSDKLoaded = frameContext.isSDKLoaded;
-  } catch {
-    // Not in Farcaster context, that's ok
-  }
 
   // Helper to shorten strings for toasts
   const shortenString = (
@@ -40,13 +28,20 @@ export function ConnectWalletFrame({ onWalletConnected }: ConnectWalletFrameProp
       : str;
   };
 
-  // Call ready() when the frame is mounted and SDK is loaded
+  // Call ready() when the frame is mounted to dismiss Farcaster splash screen
   useEffect(() => {
-    if (actions && isSDKLoaded) {
-      actions.ready().catch(console.error);
-      console.log("ConnectWalletFrame: Called SDK ready()");
-    }
-  }, [actions, isSDKLoaded]);
+    const dismissSplash = async () => {
+      try {
+        await sdk.actions.ready();
+        console.log("ConnectWalletFrame: Called SDK ready() - splash screen dismissed");
+      } catch (error) {
+        // Not in Farcaster context or SDK not available, that's ok
+        console.log("ConnectWalletFrame: SDK ready() not available (not in Farcaster)");
+      }
+    };
+    
+    dismissSplash();
+  }, []);
 
   useEffect(() => {
     if (isConnected && eoaAddress) {
