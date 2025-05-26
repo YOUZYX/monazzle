@@ -9,11 +9,16 @@ interface HomeFrameProps {
 
 export default function HomeFrame({ onTimeout }: HomeFrameProps) {
   useEffect(() => {
+    console.log("HomeFrame: Setting up 2-second timeout");
     const timer = setTimeout(() => {
+      console.log("HomeFrame: Timeout triggered, calling onTimeout");
       onTimeout();
     }, 2000);
 
-    return () => clearTimeout(timer);
+    return () => {
+      console.log("HomeFrame: Cleaning up timeout");
+      clearTimeout(timer);
+    };
   }, [onTimeout]);
 
   return (

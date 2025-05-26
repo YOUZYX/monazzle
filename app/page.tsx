@@ -29,7 +29,6 @@ export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 export default function MonazzlePage() {
   const [currentFrame, setCurrentFrame] = useState<AppFrame>(AppFrame.HOME); 
   const [activeTab, setActiveTab] = useState<NavigationTab>(NavigationTab.PLAY);
-  const [isInIframe, setIsInIframe] = useState<boolean>(false);
   
   // Use wagmi's useAccount for primary connection status and EOA address
   const { address: wagmiEoaAddress, isConnected: isWagmiConnected, status: wagmiStatus } = useAccount();
@@ -58,29 +57,11 @@ export default function MonazzlePage() {
       ? `${str.substring(0, startChars)}...${str.substring(str.length - endChars)}`
       : str;
   };
+
   // Effect to sync localEoaAddress with wagmiEoaAddress
   useEffect(() => {
     setLocalEoaAddress(wagmiEoaAddress || null);
   }, [wagmiEoaAddress]);
-  // Effect to detect if running in iframe (for Farcaster embedding)
-  useEffect(() => {
-    try {
-      const inIframe = window.self !== window.top;
-      setIsInIframe(inIframe);
-      console.log('[Monazzle] Running in iframe:', inIframe);
-      
-      // Add debug info for iframe context
-      if (inIframe) {
-        console.log('[Monazzle] Iframe detected - Farcaster embed mode');
-        console.log('[Monazzle] User agent:', navigator.userAgent);
-        console.log('[Monazzle] Referrer:', document.referrer);
-      }
-    } catch (e) {
-      // If we can't access window.top due to CORS, we're probably in an iframe
-      console.log('[Monazzle] Cross-origin iframe detected');
-      setIsInIframe(true);
-    }
-  }, []);
 
   // Effect to react to changes in wagmi's connection status
   useEffect(() => {
@@ -129,11 +110,19 @@ export default function MonazzlePage() {
     setCurrentFrame(AppFrame.PLAY_SETUP); 
     setActiveTab(NavigationTab.PLAY);
   };
-
   const handleHomeTimeout = () => {
+    console.log("HomeFrame timeout triggered", { 
+      isWagmiConnected, 
+      wagmiEoaAddress, 
+      currentFrame,
+      isInIframe: typeof window !== 'undefined' && window.parent !== window
+    });
+    
     if (!isWagmiConnected) { // Use wagmi's status
+      console.log("Wallet not connected, navigating to CONNECT_WALLET");
       setCurrentFrame(AppFrame.CONNECT_WALLET);
     } else {
+      console.log("Wallet connected, navigating to PLAY_SETUP");
       setCurrentFrame(AppFrame.PLAY_SETUP);
       setActiveTab(NavigationTab.PLAY);
     }
@@ -287,42 +276,39 @@ export default function MonazzlePage() {
         setCurrentFrame(AppFrame.PLAY_SETUP);
     }
   };
-
-  {/*useEffect(() => {
+  useEffect(() => {
     // If on HOME or CONNECT_WALLET, and the wallet IS connected and we have an EOA address, then move to PLAY_SETUP.
     // Otherwise, it should stay on HOME or CONNECT_WALLET.
+    console.log("Auto-redirect useEffect triggered:", {
+      currentFrame, 
+      isWagmiConnected, 
+      wagmiEoaAddress,
+      shouldRedirect: (currentFrame === AppFrame.HOME || currentFrame === AppFrame.CONNECT_WALLET) && isWagmiConnected && wagmiEoaAddress
+    });
+    
     if ((currentFrame === AppFrame.HOME || currentFrame === AppFrame.CONNECT_WALLET) && isWagmiConnected && wagmiEoaAddress) {
-      setCurrentFrame(AppFrame.PLAY_SETUP);
-      setActiveTab(NavigationTab.PLAY);
-    }
-  }, [currentFrame, isWagmiConnected, wagmiEoaAddress]); // Add isWagmiConnected and wagmiEoaAddress to dependencies*/}
-  useEffect(() => {
-    // If on CONNECT_WALLET and the wallet IS connected and we have an EOA address, then move to PLAY_SETUP.
-    // Don't auto-transition from HOME - let the HomeFrame timeout handle that naturally
-    if (currentFrame === AppFrame.CONNECT_WALLET && isWagmiConnected && wagmiEoaAddress) {
+      console.log("Auto-redirecting to PLAY_SETUP because wallet is connected");
       setCurrentFrame(AppFrame.PLAY_SETUP);
       setActiveTab(NavigationTab.PLAY);
     }
   }, [currentFrame, isWagmiConnected, wagmiEoaAddress]); // Add isWagmiConnected and wagmiEoaAddress to dependencies
-
   const renderCurrentFrame = () => {
-    /* console.log("Rendering frame - Top:", { 
+    console.log("Rendering frame:", { 
       currentFrame, 
       isWagmiConnected,
       wagmiEoaAddress,
       localEoaAddress,
       aaAddress,
       activeTab,
-      generatedImageUrl, 
-      selectedDifficulty 
-    }); */
+      isInIframe: typeof window !== 'undefined' && window.parent !== window
+    });
 
     if (!isWagmiConnected) { 
       if (currentFrame === AppFrame.HOME) { 
-        // console.log("Not connected, rendering HomeFrame.");
+        console.log("Not connected, rendering HomeFrame.");
         return <HomeFrame onTimeout={handleHomeTimeout} />; 
       }
-      // console.log("Not connected, rendering ConnectWalletFrame.");
+      console.log("Not connected, rendering ConnectWalletFrame.");
       return <ConnectWalletFrame onWalletConnected={handleWalletConnected} />;
     }
 
@@ -415,19 +401,10 @@ export default function MonazzlePage() {
         {children}
     </main>
   );
+
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden">
       <Toaster position="top-center" duration={3500} richColors />
-      
-      {/* Debug info for iframe mode */}
-      {isInIframe && process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-0 right-0 bg-black bg-opacity-75 text-white p-2 text-xs z-50">
-          <div>Iframe: {isInIframe ? 'YES' : 'NO'}</div>
-          <div>Frame: {currentFrame}</div>
-          <div>Connected: {isWagmiConnected ? 'YES' : 'NO'}</div>
-        </div>
-      )}
-      
       <div className="flex-grow flex flex-col overflow-y-auto"> {/* Ensure this allows content to scroll if needed */}
         <FrameContainer>
             {renderCurrentFrame()}

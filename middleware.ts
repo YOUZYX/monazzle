@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   response.headers.set('X-Frame-Options', 'ALLOWALL');
   response.headers.set(
     'Content-Security-Policy',
-    "frame-ancestors 'self' https://monazzle.vercel.app/ https://*.farcaster.xyz https://*.warpcast.com https://*.frames.sh https://*.trycloudflare.com https://*.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; object-src 'none';"
+    "frame-ancestors 'self' https://monazzle.vercel.app https://*.farcaster.xyz https://*.warpcast.com https://*.frames.sh https://*.trycloudflare.com https://*.cloudflare.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; object-src 'none';"
   );
   
   // Additional iframe compatibility headers

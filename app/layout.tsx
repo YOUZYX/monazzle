@@ -7,14 +7,14 @@ import { APP_URL } from "@/lib/constants";
 // Farcaster Frame metadata
 const frame = {
   version: "next",
-  imageUrl: `${APP_URL}/images/homestarter.png`,
+  imageUrl: `${APP_URL}/images/monazzle_feed.png`,
   button: {
     title: "Launch Monazzle",
     action: {
       type: "launch_frame",
       name: "Monazzle",
       url: APP_URL,
-      splashImageUrl: `${APP_URL}/images/monazzle_jigsaw.gif`,
+      splashImageUrl: `${APP_URL}/images/monazzle_splash.png`,
       splashBackgroundColor: "#200D44",
     },
   },
