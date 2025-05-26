@@ -292,23 +292,25 @@ export default function MonazzlePage() {
       setActiveTab(NavigationTab.PLAY);
     }
   }, [currentFrame, isWagmiConnected, wagmiEoaAddress]); // Add isWagmiConnected and wagmiEoaAddress to dependencies
+
   const renderCurrentFrame = () => {
-    console.log("Rendering frame:", { 
+    console.log("🔍 Rendering frame:", { 
       currentFrame, 
       isWagmiConnected,
       wagmiEoaAddress,
       localEoaAddress,
       aaAddress,
       activeTab,
-      isInIframe: typeof window !== 'undefined' && window.parent !== window
+      isInIframe: typeof window !== 'undefined' && window.parent !== window,
+      timestamp: new Date().toISOString()
     });
 
     if (!isWagmiConnected) { 
       if (currentFrame === AppFrame.HOME) { 
-        console.log("Not connected, rendering HomeFrame.");
+        console.log("📱 Not connected, rendering HomeFrame.");
         return <HomeFrame onTimeout={handleHomeTimeout} />; 
       }
-      console.log("Not connected, rendering ConnectWalletFrame.");
+      console.log("🔌 Not connected, rendering ConnectWalletFrame.");
       return <ConnectWalletFrame onWalletConnected={handleWalletConnected} />;
     }
 

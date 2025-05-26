@@ -20,9 +20,13 @@ export default function HomeFrame({ onTimeout }: HomeFrameProps) {
       clearTimeout(timer);
     };
   }, [onTimeout]);
-
   return (
     <div className="flex flex-col items-center justify-center h-full bg-mona-dark text-mona-light-gray p-4">
+      {/* Debug indicator */}
+      <div className="absolute top-4 left-4 bg-blue-500 text-white px-2 py-1 text-xs rounded">
+        HOME_FRAME
+      </div>
+      
       <div className="mb-8 animate-pulse">
         <Image
           src="/images/monazzle_jigsaw.gif"

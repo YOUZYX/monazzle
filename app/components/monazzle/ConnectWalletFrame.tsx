@@ -7,9 +7,6 @@ import { appKitModal } from '@/context'; // Import the Reown AppKit modal instan
 import { Wallet } from 'lucide-react'; // Assuming you use lucide-react for icons
 import { Toaster, toast } from 'sonner'; // Import Toaster and toast
 
-// Placeholder for ZeroDev integration - replace with actual SDK calls
-const ZERODEV_PROJECT_ID = 'b8f9fdbcd95c3c14aea486a0e78293a4'; // Hardcoded as per summary
-
 interface ConnectWalletFrameProps {
   onWalletConnected: (eoaAddress: string, aaAddress: string) => void;
 }
@@ -49,10 +46,15 @@ export function ConnectWalletFrame({ onWalletConnected }: ConnectWalletFrameProp
   const glassCardStyle =
     'bg-white/5 backdrop-blur-2xl border border-mona-lavender/20 rounded-2xl p-6 md:p-8 shadow-2xl w-full max-w-md text-center';
   const textMutedStyle = 'text-mona-light-gray/70 text-sm';
-
   return (
     <div className={`flex flex-col items-center justify-center h-full p-4 ${glassCardStyle}`}>
       <Toaster position="top-center" duration={3500} richColors />
+      
+      {/* Debug indicator */}
+      <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 text-xs rounded">
+        CONNECT_WALLET_FRAME
+      </div>
+      
       <Wallet size={48} className="text-mona-purple mb-6" />
 
       <h2 className="text-2xl md:text-3xl font-semibold text-mona-cream mb-3">
