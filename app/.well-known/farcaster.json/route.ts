@@ -19,7 +19,7 @@ export async function GET() {
       "primaryCategory": "games",
       "buttonTitle": "Launch Monazzle",
       //"splashImageUrl": `${APP_URL}/images/monazzle_splash.png`,
-      "splashBackgroundColor": "#200D44",
+      //"splashBackgroundColor": "#200D44",
       "webhookUrl": `${APP_URL}/api/webhook`,
     },
   };
