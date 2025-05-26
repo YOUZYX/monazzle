@@ -288,10 +288,18 @@ export default function MonazzlePage() {
     }
   };
 
-  useEffect(() => {
+  {/*useEffect(() => {
     // If on HOME or CONNECT_WALLET, and the wallet IS connected and we have an EOA address, then move to PLAY_SETUP.
     // Otherwise, it should stay on HOME or CONNECT_WALLET.
     if ((currentFrame === AppFrame.HOME || currentFrame === AppFrame.CONNECT_WALLET) && isWagmiConnected && wagmiEoaAddress) {
+      setCurrentFrame(AppFrame.PLAY_SETUP);
+      setActiveTab(NavigationTab.PLAY);
+    }
+  }, [currentFrame, isWagmiConnected, wagmiEoaAddress]); // Add isWagmiConnected and wagmiEoaAddress to dependencies*/}
+  useEffect(() => {
+    // If on CONNECT_WALLET and the wallet IS connected and we have an EOA address, then move to PLAY_SETUP.
+    // Don't auto-transition from HOME - let the HomeFrame timeout handle that naturally
+    if (currentFrame === AppFrame.CONNECT_WALLET && isWagmiConnected && wagmiEoaAddress) {
       setCurrentFrame(AppFrame.PLAY_SETUP);
       setActiveTab(NavigationTab.PLAY);
     }
