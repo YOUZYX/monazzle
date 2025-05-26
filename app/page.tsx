@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAccount } from 'wagmi'; // Import useAccount
-// import { Metadata } from "next"; // Commented out or removed
+//import { Metadata } from "next"; // Commented out or removed
 import App from "@/components/pages/app";
 import { APP_URL } from "@/lib/constants";
 import { Toaster, toast } from 'sonner'; // Import Toaster and toast
@@ -29,6 +29,7 @@ export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 export default function MonazzlePage() {
   const [currentFrame, setCurrentFrame] = useState<AppFrame>(AppFrame.HOME); 
   const [activeTab, setActiveTab] = useState<NavigationTab>(NavigationTab.PLAY);
+  const [isInIframe, setIsInIframe] = useState<boolean>(false);
   
   // Use wagmi's useAccount for primary connection status and EOA address
   const { address: wagmiEoaAddress, isConnected: isWagmiConnected, status: wagmiStatus } = useAccount();
@@ -57,11 +58,29 @@ export default function MonazzlePage() {
       ? `${str.substring(0, startChars)}...${str.substring(str.length - endChars)}`
       : str;
   };
-
   // Effect to sync localEoaAddress with wagmiEoaAddress
   useEffect(() => {
     setLocalEoaAddress(wagmiEoaAddress || null);
   }, [wagmiEoaAddress]);
+  // Effect to detect if running in iframe (for Farcaster embedding)
+  useEffect(() => {
+    try {
+      const inIframe = window.self !== window.top;
+      setIsInIframe(inIframe);
+      console.log('[Monazzle] Running in iframe:', inIframe);
+      
+      // Add debug info for iframe context
+      if (inIframe) {
+        console.log('[Monazzle] Iframe detected - Farcaster embed mode');
+        console.log('[Monazzle] User agent:', navigator.userAgent);
+        console.log('[Monazzle] Referrer:', document.referrer);
+      }
+    } catch (e) {
+      // If we can't access window.top due to CORS, we're probably in an iframe
+      console.log('[Monazzle] Cross-origin iframe detected');
+      setIsInIframe(true);
+    }
+  }, []);
 
   // Effect to react to changes in wagmi's connection status
   useEffect(() => {
@@ -388,10 +407,19 @@ export default function MonazzlePage() {
         {children}
     </main>
   );
-
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden">
       <Toaster position="top-center" duration={3500} richColors />
+      
+      {/* Debug info for iframe mode */}
+      {isInIframe && process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-0 right-0 bg-black bg-opacity-75 text-white p-2 text-xs z-50">
+          <div>Iframe: {isInIframe ? 'YES' : 'NO'}</div>
+          <div>Frame: {currentFrame}</div>
+          <div>Connected: {isWagmiConnected ? 'YES' : 'NO'}</div>
+        </div>
+      )}
+      
       <div className="flex-grow flex flex-col overflow-y-auto"> {/* Ensure this allows content to scroll if needed */}
         <FrameContainer>
             {renderCurrentFrame()}

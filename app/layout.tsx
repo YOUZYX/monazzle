@@ -1,18 +1,37 @@
 import type { Metadata } from "next";
-// import { Inter } from "next/font/google"; // Assuming you might have custom fonts or remove if not used
 import "./globals.css";
-
 import { headers } from "next/headers"; 
-import ContextProvider from '@/context'; // Import the new ContextProvider
+import ContextProvider from '@/context';
+import { APP_URL } from "@/lib/constants";
 
-// const inter = Inter({ subsets: ["latin"] }); // If using Inter font
+// Farcaster Frame metadata
+const frame = {
+  version: "next",
+  imageUrl: `${APP_URL}/images/homestarter.png`,
+  button: {
+    title: "Launch Monazzle",
+    action: {
+      type: "launch_frame",
+      name: "Monazzle",
+      url: APP_URL,
+      splashImageUrl: `${APP_URL}/images/monazzle_jigsaw.gif`,
+      splashBackgroundColor: "#200D44",
+    },
+  },
+};
 
-// Metadata from your page.tsx or a new one
 export const metadata: Metadata = {
   title: "Monazzle - Farcaster Puzzle Game",
   description: "Create and solve puzzles on Monad.",
-  // Add other metadata like openGraph, icons etc. as needed
-  //icons: { icon: '../public/images/'}, // Example
+  openGraph: {
+    title: "Monazzle - Farcaster Puzzle Game",
+    description: "Create and solve puzzles on Monad.",
+    images: [`${APP_URL}/images/homestarter.png`],
+    url: APP_URL,
+  },
+  other: {
+    "fc:frame": JSON.stringify(frame),
+  },
 };
 
 export default function RootLayout({
