@@ -109,20 +109,10 @@ export default function MonazzlePage() {
     setAaAddress(connectedAaAddress);
     setCurrentFrame(AppFrame.PLAY_SETUP); 
     setActiveTab(NavigationTab.PLAY);
-  };
-  const handleHomeTimeout = () => {
-    console.log("HomeFrame timeout triggered", { 
-      isWagmiConnected, 
-      wagmiEoaAddress, 
-      currentFrame,
-      isInIframe: typeof window !== 'undefined' && window.parent !== window
-    });
-    
+  };  const handleHomeTimeout = () => {
     if (!isWagmiConnected) { // Use wagmi's status
-      console.log("Wallet not connected, navigating to CONNECT_WALLET");
       setCurrentFrame(AppFrame.CONNECT_WALLET);
     } else {
-      console.log("Wallet connected, navigating to PLAY_SETUP");
       setCurrentFrame(AppFrame.PLAY_SETUP);
       setActiveTab(NavigationTab.PLAY);
     }
@@ -275,42 +265,19 @@ export default function MonazzlePage() {
       default:
         setCurrentFrame(AppFrame.PLAY_SETUP);
     }
-  };
-  useEffect(() => {
+  };  useEffect(() => {
     // If on HOME or CONNECT_WALLET, and the wallet IS connected and we have an EOA address, then move to PLAY_SETUP.
     // Otherwise, it should stay on HOME or CONNECT_WALLET.
-    console.log("Auto-redirect useEffect triggered:", {
-      currentFrame, 
-      isWagmiConnected, 
-      wagmiEoaAddress,
-      shouldRedirect: (currentFrame === AppFrame.HOME || currentFrame === AppFrame.CONNECT_WALLET) && isWagmiConnected && wagmiEoaAddress
-    });
-    
     if ((currentFrame === AppFrame.HOME || currentFrame === AppFrame.CONNECT_WALLET) && isWagmiConnected && wagmiEoaAddress) {
-      console.log("Auto-redirecting to PLAY_SETUP because wallet is connected");
       setCurrentFrame(AppFrame.PLAY_SETUP);
       setActiveTab(NavigationTab.PLAY);
     }
   }, [currentFrame, isWagmiConnected, wagmiEoaAddress]); // Add isWagmiConnected and wagmiEoaAddress to dependencies
-
   const renderCurrentFrame = () => {
-    console.log("🔍 Rendering frame:", { 
-      currentFrame, 
-      isWagmiConnected,
-      wagmiEoaAddress,
-      localEoaAddress,
-      aaAddress,
-      activeTab,
-      isInIframe: typeof window !== 'undefined' && window.parent !== window,
-      timestamp: new Date().toISOString()
-    });
-
     if (!isWagmiConnected) { 
       if (currentFrame === AppFrame.HOME) { 
-        console.log("📱 Not connected, rendering HomeFrame.");
         return <HomeFrame onTimeout={handleHomeTimeout} />; 
       }
-      console.log("🔌 Not connected, rendering ConnectWalletFrame.");
       return <ConnectWalletFrame onWalletConnected={handleWalletConnected} />;
     }
 

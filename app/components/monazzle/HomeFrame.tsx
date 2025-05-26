@@ -2,31 +2,43 @@
 
 import Image from "next/image";
 import React, { useEffect } from 'react';
+import { useFrame } from '@/components/farcaster-provider'; // Import useFrame hook
 
 interface HomeFrameProps {
   onTimeout: () => void;
 }
 
 export default function HomeFrame({ onTimeout }: HomeFrameProps) {
+  // Safely get Farcaster actions (might not be available outside Farcaster)
+  let actions = null;
+  let isSDKLoaded = false;
+  
+  try {
+    const frameContext = useFrame();
+    actions = frameContext.actions;
+    isSDKLoaded = frameContext.isSDKLoaded;
+  } catch {
+    // Not in Farcaster context, that's ok
+  }
+
+  // Call ready() when the frame is mounted and SDK is loaded
   useEffect(() => {
-    console.log("HomeFrame: Setting up 2-second timeout");
+    if (actions && isSDKLoaded) {
+      actions.ready().catch(console.error);
+      console.log("HomeFrame: Called SDK ready()");
+    }
+  }, [actions, isSDKLoaded]);
+
+  useEffect(() => {
     const timer = setTimeout(() => {
-      console.log("HomeFrame: Timeout triggered, calling onTimeout");
       onTimeout();
     }, 2000);
 
-    return () => {
-      console.log("HomeFrame: Cleaning up timeout");
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, [onTimeout]);
+
   return (
     <div className="flex flex-col items-center justify-center h-full bg-mona-dark text-mona-light-gray p-4">
-      {/* Debug indicator */}
-      <div className="absolute top-4 left-4 bg-blue-500 text-white px-2 py-1 text-xs rounded">
-        HOME_FRAME
-      </div>
-      
       <div className="mb-8 animate-pulse">
         <Image
           src="/images/monazzle_jigsaw.gif"
@@ -40,4 +52,4 @@ export default function HomeFrame({ onTimeout }: HomeFrameProps) {
       <p className="text-md text-mona-light-gray">Loading your puzzling adventure...</p>
     </div>
   );
-} 
+}

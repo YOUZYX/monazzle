@@ -46,15 +46,14 @@ export function FrameProvider({ children }: FrameProviderProps) {
   useEffect(() => {
     const load = async () => {
       try {
-        const context = await sdk.context;
-        if (context) {
+        const context = await sdk.context;        if (context) {
           setContext(context as FrameContext);
           setActions(sdk.actions);
           setIsEthProviderAvailable(sdk.wallet.ethProvider ? true : false);
         } else {
           setError("Failed to load Farcaster context");
         }
-        await sdk.actions.ready();
+        // Don't call ready() here - let components call it when they're ready
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to initialize SDK"

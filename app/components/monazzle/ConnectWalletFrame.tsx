@@ -6,6 +6,10 @@ import { Button } from '@/app/components/ui/button'; // Using your placeholder b
 import { appKitModal } from '@/context'; // Import the Reown AppKit modal instance
 import { Wallet } from 'lucide-react'; // Assuming you use lucide-react for icons
 import { Toaster, toast } from 'sonner'; // Import Toaster and toast
+import { useFrame } from '@/components/farcaster-provider'; // Import useFrame hook
+
+// Placeholder for ZeroDev integration - replace with actual SDK calls
+const ZERODEV_PROJECT_ID = 'b8f9fdbcd95c3c14aea486a0e78293a4'; // Hardcoded as per summary
 
 interface ConnectWalletFrameProps {
   onWalletConnected: (eoaAddress: string, aaAddress: string) => void;
@@ -14,6 +18,18 @@ interface ConnectWalletFrameProps {
 export function ConnectWalletFrame({ onWalletConnected }: ConnectWalletFrameProps) {
   const { isConnected, address: eoaAddress, connector } = useAccount();
   const [derivedAaAddress, setDerivedAaAddress] = useState<string | null>(null);
+  
+  // Safely get Farcaster actions (might not be available outside Farcaster)
+  let actions = null;
+  let isSDKLoaded = false;
+  
+  try {
+    const frameContext = useFrame();
+    actions = frameContext.actions;
+    isSDKLoaded = frameContext.isSDKLoaded;
+  } catch {
+    // Not in Farcaster context, that's ok
+  }
 
   // Helper to shorten strings for toasts
   const shortenString = (
@@ -26,6 +42,14 @@ export function ConnectWalletFrame({ onWalletConnected }: ConnectWalletFrameProp
       ? `${str.substring(0, startChars)}...${str.substring(str.length - endChars)}`
       : str;
   };
+
+  // Call ready() when the frame is mounted and SDK is loaded
+  useEffect(() => {
+    if (actions && isSDKLoaded) {
+      actions.ready().catch(console.error);
+      console.log("ConnectWalletFrame: Called SDK ready()");
+    }
+  }, [actions, isSDKLoaded]);
 
   useEffect(() => {
     if (isConnected && eoaAddress) {
@@ -45,15 +69,9 @@ export function ConnectWalletFrame({ onWalletConnected }: ConnectWalletFrameProp
 
   const glassCardStyle =
     'bg-white/5 backdrop-blur-2xl border border-mona-lavender/20 rounded-2xl p-6 md:p-8 shadow-2xl w-full max-w-md text-center';
-  const textMutedStyle = 'text-mona-light-gray/70 text-sm';
-  return (
+  const textMutedStyle = 'text-mona-light-gray/70 text-sm';  return (
     <div className={`flex flex-col items-center justify-center h-full p-4 ${glassCardStyle}`}>
       <Toaster position="top-center" duration={3500} richColors />
-      
-      {/* Debug indicator */}
-      <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 text-xs rounded">
-        CONNECT_WALLET_FRAME
-      </div>
       
       <Wallet size={48} className="text-mona-purple mb-6" />
 
