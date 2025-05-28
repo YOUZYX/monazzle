@@ -9,7 +9,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import FrameWalletProvider from "./frame-wallet-provider";
 
 interface FrameContextValue {
   context: FrameContext | null;
@@ -69,7 +68,6 @@ export function FrameProvider({ children }: FrameProviderProps) {
       });
     }
   }, [isSDKLoaded]);
-
   return (
     <FrameProviderContext.Provider
       value={{
@@ -80,7 +78,7 @@ export function FrameProvider({ children }: FrameProviderProps) {
         error,
       }}
     >
-      <FrameWalletProvider>{children}</FrameWalletProvider>
+      {children}
     </FrameProviderContext.Provider>
   );
 }

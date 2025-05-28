@@ -5,7 +5,7 @@ import { monadTestnet } from "wagmi/chains";
 import { injected, walletConnect } from "wagmi/connectors";
 
 // TODO: Replace with your actual WalletConnect Project ID if you use WalletConnect directly
-const walletConnectProjectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "YOUR_WALLETCONNECT_PROJECT_ID_PLACEHOLDER";
+const walletConnectProjectId = process.env.REOWN_PROJECT_ID as string;
 
 export const config = createConfig({
   chains: [monadTestnet],

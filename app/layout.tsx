@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { headers } from "next/headers"; 
 import ContextProvider from '@/context';
+import { FrameProvider } from '@/components/farcaster-provider';
 import { APP_URL } from "@/lib/constants";
 
 // Farcaster Frame metadata
@@ -38,12 +39,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const cookies = headers().get('cookie') ?? null; // Ensure null if no cookie
-
   return (
     <html lang="en">
       {/* <body className={inter.className}> */}
       <body> {/* Remove font className if not using Inter or similar */}
-        <ContextProvider cookies={cookies}>{children}</ContextProvider>
+        <ContextProvider cookies={cookies}>
+          <FrameProvider>
+            {children}
+          </FrameProvider>
+        </ContextProvider>
       </body>
     </html>
   );
