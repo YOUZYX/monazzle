@@ -5,7 +5,7 @@ import { farcasterFrame } from '@farcaster/frame-wagmi-connector';
 // import { mainnet, arbitrum } from '@reown/appkit/networks'; // We will primarily use monadTestnet
 
 // Get projectId from https://cloud.reown.com
-export const projectId =  process.env.REOWN_PROJECT_ID as string; // Your provided Project ID
+export const projectId =  "b8f9fdbcd95c3c14aea486a0e78293a4"; // Your provided Project ID
 
 if (!projectId) {
   throw new Error('Project ID is not defined for Reown AppKit');
