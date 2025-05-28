@@ -1,12 +1,15 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 import { Button } from '@/app/components/ui/button'; // Using your placeholder button
 import { appKitModal } from '@/context'; // Import the Reown AppKit modal instance
 import { Wallet } from 'lucide-react'; // Assuming you use lucide-react for icons
 import { Toaster, toast } from 'sonner'; // Import Toaster and toast
 import { sdk } from '@farcaster/frame-sdk';
+import { farcasterFrame } from '@farcaster/frame-wagmi-connector';
+import { useMiniAppContext } from '@/hooks/use-miniapp-context';
+import Image from 'next/image';
 
 interface ConnectWalletFrameProps {
   onWalletConnected: (eoaAddress: string, aaAddress: string) => void;
@@ -14,7 +17,27 @@ interface ConnectWalletFrameProps {
 
 export function ConnectWalletFrame({ onWalletConnected }: ConnectWalletFrameProps) {
   const { isConnected, address: eoaAddress, connector } = useAccount();
+  const { connect } = useConnect();
+  const { isEthProviderAvailable, context } = useMiniAppContext();
   const [derivedAaAddress, setDerivedAaAddress] = useState<string | null>(null);
+  // Check if we're in a Farcaster environment (either with eth provider or just in Farcaster context)
+  const isInFarcasterEnvironment = isEthProviderAvailable || context !== null;
+  
+  // For testing in Farcaster embed tool - enable button if we detect we're in an iframe or have window.parent
+  const isInIframe = typeof window !== 'undefined' && window.self !== window.top;
+  const shouldEnableFarcasterButton = isInFarcasterEnvironment || isInIframe;
+  
+  // Debug logging
+  useEffect(() => {
+    console.log("ConnectWalletFrame Debug:", {
+      isEthProviderAvailable,
+      hasContext: context !== null,
+      isInFarcasterEnvironment,
+      isInIframe,
+      shouldEnableFarcasterButton,
+      context
+    });
+  }, [isEthProviderAvailable, context, isInFarcasterEnvironment, isInIframe, shouldEnableFarcasterButton]);
 
   // Helper to shorten strings for toasts
   const shortenString = (
@@ -54,9 +77,15 @@ export function ConnectWalletFrame({ onWalletConnected }: ConnectWalletFrameProp
       onWalletConnected(eoaAddress, aa);
     }
   }, [isConnected, eoaAddress, connector, onWalletConnected]);
-
   const handleOpenModal = () => {
     appKitModal.open();
+  };  const handleFarcasterConnect = () => {
+    if (shouldEnableFarcasterButton) {
+      connect({ connector: farcasterFrame() });
+      toast.info("Connecting with Farcaster wallet...");
+    } else {
+      toast.error("Farcaster wallet is only available when using the app inside Warpcast/Farcaster browser");
+    }
   };
 
   const glassCardStyle =
@@ -77,20 +106,45 @@ export function ConnectWalletFrame({ onWalletConnected }: ConnectWalletFrameProp
       </p>
       <p className={`${textMutedStyle} mb-8`}>
         {'Some wallets may require their browser extension to be active.'}
-      </p>
-
-      <Button
+      </p>      <Button
         onClick={handleOpenModal}
         className="
           bg-mona-purple hover:bg-mona-purple/90 text-white
           font-semibold py-3 px-8 rounded-lg shadow-lg
           transition duration-300 ease-in-out transform
-          hover:scale-105 w-full text-lg
+          hover:scale-105 w-full text-lg mb-4
         "
         size="lg"
       >
         {'Connect Wallet'}
+      </Button>      <Button
+        onClick={handleFarcasterConnect}
+        disabled={!shouldEnableFarcasterButton}
+        className="
+          bg-[#835CCA] hover:bg-[#835CCA]/90 text-white
+          font-semibold py-3 px-8 rounded-lg shadow-lg
+          transition duration-300 ease-in-out transform
+          hover:scale-105 w-full text-lg
+          disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+          flex items-center justify-center gap-3
+        "
+        size="lg"
+      >
+        <Image 
+          src="/images/farcaster.png" 
+          alt="Farcaster" 
+          width={24} 
+          height={24}
+          className="w-6 h-6"
+        />
+        {'Farcaster Wallet'}
       </Button>
+
+      {!shouldEnableFarcasterButton && (
+        <p className="text-mona-light-gray/60 text-xs text-center mt-2">
+          Farcaster wallet is only available inside Farcaster
+        </p>
+      )}
     </div>
   );
 }

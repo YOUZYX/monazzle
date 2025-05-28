@@ -36,7 +36,7 @@ export const appKitModal = createAppKit({
   features: {
     analytics: true, // Optional - defaults to your Cloud configuration
     email: false, // is set to true by default
-    socials: ['google','farcaster']
+    socials: false,
     // You might explore other features like `embeddedWallets` if Reown supports them for your project
   }
 });
