@@ -23,11 +23,15 @@ import { DifficultySelectionModal } from '@/app/components/monazzle/DifficultySe
 import HomeFrame from "@/app/components/monazzle/HomeFrame"; 
 import { NavigationTab } from '@/app/lib/navigation';
 import { AppFrame } from '@/app/lib/appFrame';
+import { useFarcasterReady } from '@/hooks/use-farcaster-ready'; // Add Farcaster ready hook
 
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
 export default function MonazzlePage() {
-  const [currentFrame, setCurrentFrame] = useState<AppFrame>(AppFrame.HOME); 
+  // Call Farcaster ready when interface is loaded
+  const { isReady: isFarcasterReady, isSDKLoaded } = useFarcasterReady();
+  
+  const [currentFrame, setCurrentFrame] = useState<AppFrame>(AppFrame.HOME);
   const [activeTab, setActiveTab] = useState<NavigationTab>(NavigationTab.PLAY);
   
   // Use wagmi's useAccount for primary connection status and EOA address
@@ -370,33 +374,48 @@ export default function MonazzlePage() {
         {children}
     </main>
   );
-
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden">
       <Toaster position="top-center" duration={3500} richColors />
-      <div className="flex-grow flex flex-col overflow-y-auto"> {/* Ensure this allows content to scroll if needed */}
-        <FrameContainer>
-            {renderCurrentFrame()}
-        </FrameContainer>
-      </div>
       
-      {isWagmiConnected && wagmiEoaAddress && ( // Show footer only if truly connected
-        <FooterNav activeTab={activeTab} onNavigate={handleTabChange} />
+      {/* Show loading screen while Farcaster SDK is initializing */}
+      {!isSDKLoaded && (
+        <div className="flex-grow flex items-center justify-center bg-gradient-to-br from-mona-deep-purple via-mona-charcoal to-mona-deep-purple text-mona-cream">
+          <div className="text-center">
+            <div className="animate-pulse text-2xl mb-4">🧩</div>
+            <div className="text-lg">Loading Monazzle...</div>
+            <div className="text-sm text-mona-cream/70 mt-2">Initializing Farcaster integration</div>
+          </div>
+        </div>
       )}
+      
+      {/* Main app content - only show when SDK is loaded */}
+      {isSDKLoaded && (
+        <>
+          <div className="flex-grow flex flex-col overflow-y-auto"> {/* Ensure this allows content to scroll if needed */}
+            <FrameContainer>
+                {renderCurrentFrame()}
+            </FrameContainer>
+          </div>
+          
+          {isWagmiConnected && wagmiEoaAddress && ( // Show footer only if truly connected
+            <FooterNav activeTab={activeTab} onNavigate={handleTabChange} />
+          )}
 
-      <ImagePreviewModal 
-        isOpen={showImagePreviewModal}
-        imageUrl={imageForPreview}
-        onClose={handleCloseImagePreview}
-        onStartPlaying={handleStartPlayingFromPreview}
-      />
+          <ImagePreviewModal 
+            isOpen={showImagePreviewModal}
+            imageUrl={imageForPreview}
+            onClose={handleCloseImagePreview}
+            onStartPlaying={handleStartPlayingFromPreview}
+          />
 
-      <DifficultySelectionModal 
-        isOpen={showDifficultyModal}
-        onClose={handleCloseDifficultyModal}
-        onConfirmDifficulty={handleConfirmDifficultyAndStart}
-      />
-
+          <DifficultySelectionModal 
+            isOpen={showDifficultyModal}
+            onClose={handleCloseDifficultyModal}
+            onConfirmDifficulty={handleConfirmDifficultyAndStart}
+          />
+        </>
+      )}
     </div>
   );
 }
