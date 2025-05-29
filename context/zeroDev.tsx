@@ -199,7 +199,6 @@ export const ZeroDevProvider: React.FC<{ children: ReactNode }> = ({ children })
       //console.log("[MonazzleZeroDevLog] initializeSmartAccount finished.");
     }
   }, [isConnected, walletClient, process.env.NEXT_PUBLIC_ZERODEV_PROJECT_ID])
-
   const topUpAccount = useCallback(async (amount: bigint): Promise<string | null> => {
     if (!walletClient || !eoa || !smartAccountAddress) return null
     
@@ -213,6 +212,7 @@ export const ZeroDevProvider: React.FC<{ children: ReactNode }> = ({ children })
         account: eoa as `0x${string}`,
         to: smartAccountAddress as `0x${string}`,
         value: amount,
+        chain: monadTestnet, // Explicitly specify the chain
       })
       
       //console.log(`[MonazzleZeroDevLog] Direct transfer from EOA (${eoa}) to AA wallet (${smartAccountAddress}), hash: ${hash}`)

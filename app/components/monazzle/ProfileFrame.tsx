@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { useAccount, useDisconnect, useBalance, useSendTransaction, useWaitForTransactionReceipt } from 'wagmi';
+import { useAccount, useDisconnect, useBalance, useSendTransaction, useWaitForTransactionReceipt, useSwitchChain } from 'wagmi';
 import { entryPointContractAddress } from '../../lib/contracts'; // Assuming contracts.ts is in app/lib
+import { monadTestnet } from '@/lib/chains';
+import { ensureMonadTestnet, getChainName, autoSwitchToMonadTestnet, isFarcasterMobile } from '@/lib/chainUtils';
 import {
   Button,
   Card,
@@ -38,7 +40,8 @@ export function ProfileFrame({ eoaAddress: eoaAddressFromProp, onDisconnect }: P
 
   const { disconnect } = useDisconnect();
   const { data: eoaBalance } = useBalance({ address: eoaAddressFromProp as `0x${string}` | undefined });
-  const { connector } = useAccount(); // Get connector info
+  const { connector, chainId } = useAccount(); // Get connector and chainId info
+  const { switchChain } = useSwitchChain(); // Add chain switching capability
 
   const {
     initializeSmartAccount,
@@ -144,13 +147,25 @@ export function ProfileFrame({ eoaAddress: eoaAddressFromProp, onDisconnect }: P
     fetchAndUpdateAaBalance();
   }, [fetchAndUpdateAaBalance]);
 
+  // Auto-switch to Monad Testnet when running in Farcaster mobile
+  useEffect(() => {
+    const handleAutoSwitch = async () => {
+      if (chainId && switchChain) {
+        await autoSwitchToMonadTestnet(chainId, (args) => Promise.resolve(switchChain(args)));
+      }
+    };
+
+    // Only auto-switch once when component mounts and we have chain info
+    if (chainId !== undefined) {
+      handleAutoSwitch();
+    }
+  }, [chainId, switchChain]);
+
   const handleDisconnectClick = () => {
     onDisconnect(); 
     disconnect(); 
     toast.info("Wallet disconnected.");
-  };
-
-  const handleTopUp = async () => {
+  };  const handleTopUp = async () => {
     if (!smartAccountAddress) {
       // console.error("[MonazzleZeroDevLog] TopUp Error: Missing smartAccountAddress");
       return;
@@ -162,15 +177,24 @@ export function ProfileFrame({ eoaAddress: eoaAddressFromProp, onDisconnect }: P
     }
 
     setIsToppingUp(true);
+    
+    // Ensure we're on Monad Testnet before proceeding
+    const chainSwitchSuccess = await ensureMonadTestnet(chainId, (args) => Promise.resolve(switchChain(args)), 'top-up');
+    if (!chainSwitchSuccess) {
+      setIsToppingUp(false);
+      return;
+    }
+
     // console.log(`[MonazzleZeroDevLog] Attempting direct top up of AA wallet ${smartAccountAddress} with ${topUpAmount} MON from EOA`);
     
-    const topUpToastId = toast.loading(`Topping up ${topUpAmount} MON...`);
+    const topUpToastId = toast.loading(`Topping up ${topUpAmount} MON on Monad Testnet...`);
     
     try {
       sendTransaction({ 
         to: smartAccountAddress as `0x${string}`,
         value: parseEther(topUpAmount),
         gas: BigInt(300000),
+        chainId: monadTestnet.id, // Explicitly specify chain ID
       }, {
         onSuccess: (data) => {
           toast.dismiss(topUpToastId);
@@ -184,6 +208,7 @@ export function ProfileFrame({ eoaAddress: eoaAddressFromProp, onDisconnect }: P
       setShowTopUpModal(false);
     } catch (e) {
       // console.error("[MonazzleZeroDevLog] Error during top-up:", e);
+      toast.error(`Top-up Error: ${(e as Error).message}`, { id: topUpToastId });
       setIsToppingUp(false);
     }
   };
@@ -341,4 +366,4 @@ export function ProfileFrame({ eoaAddress: eoaAddressFromProp, onDisconnect }: P
       )}
     </div>
   );
-} 
+}

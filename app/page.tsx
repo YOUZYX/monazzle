@@ -1,11 +1,12 @@
 'use client'; // This page will now be a client component due to state and hooks
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useAccount } from 'wagmi'; // Import useAccount
+import { useAccount, useSwitchChain } from 'wagmi'; // Import useAccount and useSwitchChain
 //import { Metadata } from "next"; // Commented out or removed
 import App from "@/components/pages/app";
 import { APP_URL } from "@/lib/constants";
 import { Toaster, toast } from 'sonner'; // Import Toaster and toast
+import { autoSwitchToMonadTestnet } from '@/lib/chainUtils'; // Import chain utilities
 
 // Import Frame Components
 // import { ConnectAndTopUpFrame } from '@/app/components/monazzle/ConnectAndTopUpFrame'; // Original connect frame, now replaced by ConnectWalletFrame and ProfileFrame for wallet info
@@ -33,9 +34,9 @@ export default function MonazzlePage() {
   
   const [currentFrame, setCurrentFrame] = useState<AppFrame>(AppFrame.HOME);
   const [activeTab, setActiveTab] = useState<NavigationTab>(NavigationTab.PLAY);
-  
-  // Use wagmi's useAccount for primary connection status and EOA address
-  const { address: wagmiEoaAddress, isConnected: isWagmiConnected, status: wagmiStatus } = useAccount();
+    // Use wagmi's useAccount for primary connection status and EOA address
+  const { address: wagmiEoaAddress, isConnected: isWagmiConnected, status: wagmiStatus, chainId } = useAccount();
+  const { switchChain } = useSwitchChain(); // Add chain switching capability
 
   // Local state for AA address (still needed as it's derived based on EOA)
   const [aaAddress, setAaAddress] = useState<string | null>(null);

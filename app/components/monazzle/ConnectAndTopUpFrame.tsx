@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState, useContext } from 'react';
-import { useAccount, useConnect, useDisconnect, useBalance } from 'wagmi';
+import { useAccount, useConnect, useDisconnect, useBalance, useSwitchChain } from 'wagmi';
 import { injected } from 'wagmi/connectors'; // Assuming 'injected' is a desired default
 import { Button, Card, CardContent, CardHeader, CardTitle, Input } from '@/app/components/monazzle/ui_placeholders'; // Using placeholders
 import { ZeroDevContext } from '@/context/zeroDev'; // Import ZeroDevContext
-import { monadTestnet } from '@/lib/chains'; // Import your chain definition
+import { autoSwitchToMonadTestnet, ensureMonadTestnet } from '@/lib/chainUtils'; // Import chain utilities
 import { Toaster, toast } from 'sonner'; // Import Toaster and toast
+import { monadTestnet } from '@/lib/chains'; // Import your chain definition
 
 interface ConnectAndTopUpFrameProps {
   onWalletsConnected: (eoaAddress: string, aaAddress: string) => void;
@@ -23,10 +24,10 @@ export function ConnectAndTopUpFrame({ onWalletsConnected, onDisconnect }: Conne
       ? `${str.substring(0, startChars)}...${str.substring(str.length - endChars)}`
       : str;
   };
-
-  const { address: eoaAddress, connector: activeConnector, isConnected, isConnecting } = useAccount();
+  const { address: eoaAddress, connector: activeConnector, isConnected, isConnecting, chainId } = useAccount();
   const { connect, connectors, error: connectError, status } = useConnect(); // Use status to get pending state
   const { disconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain(); // Add chain switching capability
 
   // Get ZeroDev context
   const { 
@@ -104,14 +105,21 @@ export function ConnectAndTopUpFrame({ onWalletsConnected, onDisconnect }: Conne
     toast.info("Wallet disconnected.");
     onDisconnect(); // Notify parent to change frame
   };
-  const { topUpAccount: zeroDevTopUp } = useContext(ZeroDevContext);
-  const handleTopUp = async () => {
+  const { topUpAccount: zeroDevTopUp } = useContext(ZeroDevContext);  const handleTopUp = async () => {
     if (!kernelClient || !smartAccountAddress || !eoaAddress) {
       // console.error("[MonazzleZeroDevLog] TopUp Error: Missing kernelClient, smartAccountAddress or eoaAddress");
       toast.error("Top-up Error: Required wallet information is missing.");
       return;
     }
+
     setIsToppingUp(true);
+    
+    // Ensure we're on Monad Testnet before proceeding
+    const chainSwitchSuccess = await ensureMonadTestnet(chainId, (args) => Promise.resolve(switchChain(args)), 'top-up');
+    if (!chainSwitchSuccess) {
+      setIsToppingUp(false);
+      return;
+    }
     const topUpToastId = toast.loading(`Topping up Smart Account (${shortenString(smartAccountAddress)}) with ${topUpAmount} MON...`);
     // console.log(`[MonazzleZeroDevLog] Attempting to top up AA wallet ${smartAccountAddress} with ${topUpAmount} MON from ${eoaAddress}`);
     try {
@@ -143,6 +151,20 @@ export function ConnectAndTopUpFrame({ onWalletsConnected, onDisconnect }: Conne
   };
 
   const availableConnectors = connectors.filter(c => c.id !== 'frame'); // Exclude Farcaster Frame connector for direct connection
+
+  // Auto-switch to Monad Testnet when running in Farcaster mobile
+  useEffect(() => {
+    const handleAutoSwitch = async () => {
+      if (chainId && switchChain) {
+        await autoSwitchToMonadTestnet(chainId, (args) => Promise.resolve(switchChain(args)));
+      }
+    };
+
+    // Only auto-switch once when component mounts and we have chain info
+    if (chainId !== undefined) {
+      handleAutoSwitch();
+    }
+  }, [chainId, switchChain]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-mona-deep-purple text-mona-cream">
@@ -262,4 +284,4 @@ export function ConnectAndTopUpFrame({ onWalletsConnected, onDisconnect }: Conne
       )}
     </div>
   );
-} 
+}
