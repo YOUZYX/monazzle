@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { farcasterFrame } from "@farcaster/frame-wagmi-connector";
 import { createConfig, http, WagmiProvider } from "wagmi";
-import { monadTestnet } from "wagmi/chains";
+import { monadTestnet } from "@/lib/chains"; // Use our custom Monad chain
 import { injected, walletConnect } from "wagmi/connectors";
 
 // TODO: Replace with your actual WalletConnect Project ID if you use WalletConnect directly
